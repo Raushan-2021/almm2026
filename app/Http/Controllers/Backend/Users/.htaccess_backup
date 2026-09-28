@@ -1,0 +1,86 @@
+
+<IfModule mod_rewrite.c>
+Options -Indexes
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+   #RewriteRule ^.env - [F,L,NC]
+   # <Files ~ "\.(env|json|config.js|md|gitignore|gitattributes|lock)$">
+   #  Order allow,deny
+   #  deny from all
+   # </Files>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+    RewriteRule ^.env - [F,L,NC]
+    <Files ~ "\.(env|json|config.js|md|gitignore|gitattributes|lock|.git)$">
+     Order allow,deny
+     deny from all
+    </Files>
+
+<Files ~ "\.lock$">
+    Order allow,deny
+    Deny from all
+</Files>
+RedirectMatch 404 \.lock$
+
+#<Files ~ ".htaccess$">
+#    Order allow,deny
+#    Deny from all
+#</Files>
+#RedirectMatch 404 .htacces$
+
+	#RewriteCond %{REQUEST_URI} !\.(lock)$
+
+<IfModule mod_headers.c>
+      Header set Content-Security-Policy "default-src 'self' fonts.gstatic.com; script-src http: 'unsafe-inline' ; style-src  'self' 'unsafe-inline'  fonts.googleapis.com"
+      Header always set X-XSS-Protection "1; mode=block"
+      Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+      Header always set Referrer-Policy "no-referrer-when-downgrade"
+      Header always set X-Frame-Options "SAMEORIGIN"
+      Header always set X-Content-Type-Options "nosniff"
+
+    <IfModule mod_headers.c>
+    # START - Disable server signature #
+    ServerSignature Off
+    # END - Disable server signature #
+</IfModule>
+
+
+#<Files ~ "\.json$">
+#    Order allow,deny
+#    Deny from all
+#</Files>
+
+ #Block pages of files to be accessed directly
+IndexIgnore *.json
+#IndexIgnore *.lock
+#IndexIgnore .htaccessRewriteEngine On
+
+RewriteEngine On
+
+# If the host is NOT your correct host ? redirect to your real application
+RewriteCond %{HTTP_HOST} !^10\.247\.7\.136$ [NC]
+RewriteRule ^.*$ http://10.247.7.136/almm/ [R=302,L]
+
+# If host is correct, but path is wrong ? redirect to /almm/
+#RewriteRule !^almm/ http://10.247.7.136/almm/ [R=302,L]
+
+# ? Block and redirect access to sensitive folders
+    RewriteRule ^(vendor|storage|node_modules|icons|tests)/.*$ / [R=301,L]
+

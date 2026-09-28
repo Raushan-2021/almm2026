@@ -1,0 +1,7 @@
+.env
+.htaccess
+storage/documents/
+storage/framework/
+storage/logs/
+/vendor/
+/node_modules/
